@@ -6,4 +6,8 @@
 5. Changing the optimal perplexity to: *20*. 
 
 # Tasl 7
-1. Added jandling anomalies and outliers.
+1. Added handling anomalies and outliers.
+2. Correction: k=3 means 3 clusters
+3. Note: `IsBadBuy` as a clustering feature causes circularity.
+4. Missing cluster distribution plots (task's hint)
+
