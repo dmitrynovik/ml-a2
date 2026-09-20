@@ -24,3 +24,10 @@
 3. Fixed an unverified assumption that `tfidf_features_small.csv` rows line up 1:1 with `hydrogen_small.csv` rows (no shared ID column existed). Added a sanity check that confirms in-vocabulary words from sampled tweets have nonzero TF-IDF weight in the matching row (validated: 100% match on real data vs ~9% on a deliberately shifted control).
 4. Fixed the attention-weight visualization being dominated by the attention-sink every transformer directs at its special tokens (`<s>`/`</s>`), which swamped the actual content-word pattern and didn't support the written interpretation. Added `filter_special_tokens` (drops special tokens, renormalizes) and a "top attended words" bar chart so the visualization highlights the words actually driving the classification.
 
+# Task 10
+1. Fixed `preprocess()` tokenizing the question twice: `question_with_context` already embeds the question ("question: {q} context: {c}"), but it was passed alongside `question` again as a `text_pair`, and T5's tokenizer just concatenates pair sequences (no BERT-style `[SEP]`), so the question was duplicated in every training input. Now tokenizes `question_with_context` alone.
+2. Fixed `generate_response()` truncating the question+context input to `MAX_OUTPUT_LENGTH` (128) instead of `MAX_INPUT_LENGTH` (512) at inference time, inconsistent with training preprocessing and cutting off longer contexts for both the fine-tuned model and the pretrained-model comparison. Also added explicit `max_new_tokens=MAX_OUTPUT_LENGTH` on `.generate()` instead of relying on the deprecated default.
+3. Added the missing pretrained-model (`mrm8488/t5-base-finetuned-squadv2`) without-context ROUGE evaluation and first-5-sample generative analysis, so its evaluation now replicates Tasks 3/4 the same way the fine-tuned model's does (previously only with-context ROUGE was computed for it).
+4. Translated remaining Korean markdown headers and code comments to English.
+5. Note: fixes #1–#2 change training/inference behavior, so the notebook needs a full re-run (re-fine-tuning, not just re-evaluation) and `Assessment2-Report.docx`'s Task 10 numbers/tables need updating to match.
+
